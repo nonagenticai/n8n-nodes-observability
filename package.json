@@ -1,6 +1,6 @@
 {
-  "name": "@nonagentic/n8n-nodes-observability",
-  "version": "0.2.0",
+  "name": "@nonagenticai/n8n-nodes-observability",
+  "version": "0.2.1",
   "description": "n8n node for Prometheus, Loki, Grafana, Pushgateway and OTLP",
   "keywords": [
     "n8n-community-node-package",

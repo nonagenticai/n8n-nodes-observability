@@ -35,7 +35,7 @@ export function validateProductionConfig(
   if (runtime !== "production") return;
   if (!env.OBSERVABILITY_API_URL) {
     throw new Error(
-      `[@nonagentic/n8n-nodes-observability] Missing required env var in ` +
+      `[@nonagenticai/n8n-nodes-observability] Missing required env var in ` +
         `production: OBSERVABILITY_API_URL. Set it in the n8n deployment manifest ` +
         `and redeploy.`,
     );

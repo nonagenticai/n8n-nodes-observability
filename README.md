@@ -1,6 +1,6 @@
 # n8n-nodes-observability
 
-[![npm version](https://img.shields.io/npm/v/@nonagentic/n8n-nodes-observability.svg)](https://www.npmjs.com/package/@nonagentic/n8n-nodes-observability)
+[![npm version](https://img.shields.io/npm/v/@nonagenticai/n8n-nodes-observability.svg)](https://www.npmjs.com/package/@nonagenticai/n8n-nodes-observability)
 [![License: Apache-2.0](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 [![CI](https://github.com/nonagenticai/n8n-nodes-observability/actions/workflows/ci.yml/badge.svg)](https://github.com/nonagenticai/n8n-nodes-observability/actions/workflows/ci.yml)
 [![Release](https://img.shields.io/github/v/release/nonagenticai/n8n-nodes-observability)](https://github.com/nonagenticai/n8n-nodes-observability/releases)
@@ -26,12 +26,12 @@ Grafana at once.
 
 ### n8n GUI (recommended)
 
-**Settings → Community Nodes → Install** → `@nonagentic/n8n-nodes-observability`.
+**Settings → Community Nodes → Install** → `@nonagenticai/n8n-nodes-observability`.
 
 ### Manual
 
 ```bash
-npm install @nonagentic/n8n-nodes-observability
+npm install @nonagenticai/n8n-nodes-observability
 ```
 
 Restart n8n afterwards.

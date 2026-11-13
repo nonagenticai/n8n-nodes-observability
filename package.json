@@ -59,7 +59,7 @@
     "orval": "^8.5.3",
     "prettier": "^3.8.1",
     "ts-jest": "^29.4.15",
-    "typescript": "^6.0.3",
+    "typescript": "^7.0.2",
     "typescript-eslint": "^8.59.2"
   },
   "author": {

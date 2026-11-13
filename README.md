@@ -2,6 +2,8 @@
 
 [![npm version](https://img.shields.io/npm/v/@nonagentic/n8n-nodes-observability.svg)](https://www.npmjs.com/package/@nonagentic/n8n-nodes-observability)
 [![License: Apache-2.0](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
+[![CI](https://github.com/nonagenticai/n8n-nodes-observability/actions/workflows/ci.yml/badge.svg)](https://github.com/nonagenticai/n8n-nodes-observability/actions/workflows/ci.yml)
+[![Release](https://img.shields.io/github/v/release/nonagenticai/n8n-nodes-observability)](https://github.com/nonagenticai/n8n-nodes-observability/releases)
 
 An n8n community node for querying and writing metrics and logs across
 [Prometheus](https://prometheus.io), [Loki](https://grafana.com/oss/loki/),
@@ -101,6 +103,16 @@ regenerates `docs/GENERATED_REFERENCE.md` and `docs/node-reference.json` from
   `pushMetric`, `meteringInstantQuery`) never read the credential URL and are not gated by it.
 - The node is replay-safe: read operations are marked as such, and writes are not retried after a
   response was received.
+
+## Security
+
+Report vulnerabilities privately through the repository's Security tab — see
+[`SECURITY.md`](SECURITY.md). Do not open a public issue for a security problem.
+
+## Contributing
+
+Issues and pull requests are welcome. See [`CONTRIBUTING.md`](CONTRIBUTING.md) for the
+development commands and the commit conventions. Commits carry DCO sign-off.
 
 ## License
 

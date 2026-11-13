@@ -34,23 +34,29 @@ permissions:
 
 jobs:
   # Credentials. A full-tree scan is the honest one for a repo whose whole point is being public.
-  gitleaks:
+  secret-scan:
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
       - uses: actions/checkout@v5
-      - name: install gitleaks 8.30.1 (pinned, sha256-verified)
+      - name: install betterleaks 1.10.1 (pinned, sha256-verified)
         run: |
           set -euo pipefail
-          version=8.30.1
-          sha=551f6fc83ea457d62a0d98237cbad105af8d557003051f41f3e7ca7b3f2470eb
-          curl -fsSL -o "$RUNNER_TEMP/gitleaks.tgz" \
-            "https://github.com/gitleaks/gitleaks/releases/download/v${version}/gitleaks_${version}_linux_x64.tar.gz"
-          echo "${sha}  $RUNNER_TEMP/gitleaks.tgz" | sha256sum -c -
-          tar -xzf "$RUNNER_TEMP/gitleaks.tgz" -C "$RUNNER_TEMP" gitleaks
+          version=1.10.1
+          sha=c174b42d7aa60caf58c0c3e555c0e4bed01fe6b0d99a412bce777b5af4ce913e
+          curl -fsSL -o "$RUNNER_TEMP/betterleaks.tgz" \
+            "https://github.com/betterleaks/betterleaks/releases/download/v${version}/betterleaks_${version}_linux_x64.tar.gz"
+          echo "${sha}  $RUNNER_TEMP/betterleaks.tgz" | sha256sum -c -
+          tar -xzf "$RUNNER_TEMP/betterleaks.tgz" -C "$RUNNER_TEMP" betterleaks
+      # The two --disable-rule flags keep detection identical to the gitleaks
+      # 8.30.1 this replaces: betterleaks' built-in defaults add
+      # generic-credential-uri and generic-password, which gitleaks did not
+      # have, and they fire on local dev DSNs and `PASSWORD:` placeholders
+      # rather than credentials. Fleet decision 2026-11-13.
       - name: scan the tree
         run: |
-          "$RUNNER_TEMP/gitleaks" dir --redact --exit-code 1 --no-banner .
+          "$RUNNER_TEMP/betterleaks" dir --redact --exit-code 1 --no-banner \
+            --disable-rule generic-credential-uri --disable-rule generic-password .
 
   # The other half of the public-repo rule: internal hostnames, tailnet addresses, home paths and
   # private repository names. Run it locally before pushing: `bash scripts/ci/no-private-refs.sh`.
@@ -85,7 +91,7 @@ jobs:
   # release decision; `main` is not.
   publish:
     if: startsWith(github.ref, 'refs/tags/v')
-    needs: [gitleaks, private-refs, build]
+    needs: [secret-scan, private-refs, build]
     runs-on: ubuntu-latest
     timeout-minutes: 30
     steps:

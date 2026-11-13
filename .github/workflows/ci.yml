@@ -94,6 +94,13 @@ jobs:
     needs: [secret-scan, private-refs, build]
     runs-on: ubuntu-latest
     timeout-minutes: 30
+    # `id-token: write` is what lets sigstore attest the tarball. It is independent of the
+    # credential used to upload: provenance is minted from the OIDC token, so this works with
+    # NODE_AUTH_TOKEN today and keeps working when the token is removed in favour of a
+    # trusted publisher.
+    permissions:
+      contents: read
+      id-token: write
     steps:
       - uses: actions/checkout@v7
       - uses: actions/setup-node@v7
@@ -114,6 +121,6 @@ jobs:
             exit 1
           fi
       - name: publish
-        run: npm publish --access public
+        run: npm publish --provenance --access public
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}

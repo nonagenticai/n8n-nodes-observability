@@ -1,0 +1,426 @@
+{
+  "package": {
+    "name": "@nonagentic/n8n-nodes-observability",
+    "version": "0.2.0",
+    "description": "n8n node for Prometheus, Loki, Grafana, Pushgateway and OTLP"
+  },
+  "api": {
+    "version": "1.0.0",
+    "title": "Observability Node APIs",
+    "description": "OpenAPI specification for the Observability n8n node, documenting interactions with Prometheus, Loki, and Grafana APIs."
+  },
+  "resources": [
+    "Prometheus",
+    "Loki",
+    "Grafana"
+  ],
+  "operations": [
+    {
+      "operationId": "prometheusInstantQuery",
+      "method": "GET",
+      "path": "/api/v1/query",
+      "summary": "Instant Query",
+      "description": "Execute an instant PromQL query at a single point in time",
+      "tags": [
+        "Prometheus"
+      ],
+      "parametersCount": 3,
+      "hasRequestBody": false,
+      "responseCodes": [
+        "200",
+        "400",
+        "503"
+      ]
+    },
+    {
+      "operationId": "prometheusRangeQuery",
+      "method": "GET",
+      "path": "/api/v1/query_range",
+      "summary": "Range Query",
+      "description": "Execute a PromQL query over a range of time",
+      "tags": [
+        "Prometheus"
+      ],
+      "parametersCount": 4,
+      "hasRequestBody": false,
+      "responseCodes": [
+        "200",
+        "400"
+      ]
+    },
+    {
+      "operationId": "prometheusGetTargets",
+      "method": "GET",
+      "path": "/api/v1/targets",
+      "summary": "Get Targets",
+      "description": "Get active and dropped scrape targets",
+      "tags": [
+        "Prometheus"
+      ],
+      "parametersCount": 1,
+      "hasRequestBody": false,
+      "responseCodes": [
+        "200"
+      ]
+    },
+    {
+      "operationId": "prometheusGetAlerts",
+      "method": "GET",
+      "path": "/api/v1/alerts",
+      "summary": "Get Alerts",
+      "description": "Get list of active alerts",
+      "tags": [
+        "Prometheus"
+      ],
+      "parametersCount": 0,
+      "hasRequestBody": false,
+      "responseCodes": [
+        "200"
+      ]
+    },
+    {
+      "operationId": "prometheusGetRules",
+      "method": "GET",
+      "path": "/api/v1/rules",
+      "summary": "Get Rules",
+      "description": "Get alerting and recording rules",
+      "tags": [
+        "Prometheus"
+      ],
+      "parametersCount": 1,
+      "hasRequestBody": false,
+      "responseCodes": [
+        "200"
+      ]
+    },
+    {
+      "operationId": "prometheusGetMetricNames",
+      "method": "GET",
+      "path": "/api/v1/label/__name__/values",
+      "summary": "Get Metric Names",
+      "description": "Get all metric names",
+      "tags": [
+        "Prometheus"
+      ],
+      "parametersCount": 0,
+      "hasRequestBody": false,
+      "responseCodes": [
+        "200"
+      ]
+    },
+    {
+      "operationId": "prometheusGetSeries",
+      "method": "GET",
+      "path": "/api/v1/series",
+      "summary": "Get Series",
+      "description": "Find series by label matchers",
+      "tags": [
+        "Prometheus"
+      ],
+      "parametersCount": 1,
+      "hasRequestBody": false,
+      "responseCodes": [
+        "200"
+      ]
+    },
+    {
+      "operationId": "prometheusGetMetadata",
+      "method": "GET",
+      "path": "/api/v1/metadata",
+      "summary": "Get Metadata",
+      "description": "Get metric metadata",
+      "tags": [
+        "Prometheus"
+      ],
+      "parametersCount": 1,
+      "hasRequestBody": false,
+      "responseCodes": [
+        "200"
+      ]
+    },
+    {
+      "operationId": "lokiQueryLogs",
+      "method": "GET",
+      "path": "/loki/api/v1/query",
+      "summary": "Query Logs",
+      "description": "Execute a LogQL instant query",
+      "tags": [
+        "Loki"
+      ],
+      "parametersCount": 3,
+      "hasRequestBody": false,
+      "responseCodes": [
+        "200",
+        "400"
+      ]
+    },
+    {
+      "operationId": "lokiQueryLogsRange",
+      "method": "GET",
+      "path": "/loki/api/v1/query_range",
+      "summary": "Query Logs Range",
+      "description": "Execute a LogQL range query",
+      "tags": [
+        "Loki"
+      ],
+      "parametersCount": 3,
+      "hasRequestBody": false,
+      "responseCodes": [
+        "200"
+      ]
+    },
+    {
+      "operationId": "lokiGetLabels",
+      "method": "GET",
+      "path": "/loki/api/v1/labels",
+      "summary": "Get Labels",
+      "description": "Get all label names",
+      "tags": [
+        "Loki"
+      ],
+      "parametersCount": 0,
+      "hasRequestBody": false,
+      "responseCodes": [
+        "200"
+      ]
+    },
+    {
+      "operationId": "lokiGetLabelValues",
+      "method": "GET",
+      "path": "/loki/api/v1/label/{name}/values",
+      "summary": "Get Label Values",
+      "description": "Get values for a specific label",
+      "tags": [
+        "Loki"
+      ],
+      "parametersCount": 1,
+      "hasRequestBody": false,
+      "responseCodes": [
+        "200"
+      ]
+    },
+    {
+      "operationId": "lokiGetSeries",
+      "method": "GET",
+      "path": "/loki/api/v1/series",
+      "summary": "Get Series",
+      "description": "Get series by label matchers",
+      "tags": [
+        "Loki"
+      ],
+      "parametersCount": 1,
+      "hasRequestBody": false,
+      "responseCodes": [
+        "200"
+      ]
+    },
+    {
+      "operationId": "grafanaSearchDashboards",
+      "method": "GET",
+      "path": "/api/search",
+      "summary": "Search Dashboards",
+      "description": "Search for dashboards",
+      "tags": [
+        "Grafana"
+      ],
+      "parametersCount": 2,
+      "hasRequestBody": false,
+      "responseCodes": [
+        "200"
+      ]
+    },
+    {
+      "operationId": "grafanaGetDashboard",
+      "method": "GET",
+      "path": "/api/dashboards/uid/{uid}",
+      "summary": "Get Dashboard",
+      "description": "Get a dashboard by UID",
+      "tags": [
+        "Grafana"
+      ],
+      "parametersCount": 1,
+      "hasRequestBody": false,
+      "responseCodes": [
+        "200",
+        "404"
+      ]
+    },
+    {
+      "operationId": "grafanaGetAnnotations",
+      "method": "GET",
+      "path": "/api/annotations",
+      "summary": "Get Annotations",
+      "description": "Get annotations",
+      "tags": [
+        "Grafana"
+      ],
+      "parametersCount": 3,
+      "hasRequestBody": false,
+      "responseCodes": [
+        "200"
+      ]
+    },
+    {
+      "operationId": "grafanaCreateAnnotation",
+      "method": "POST",
+      "path": "/api/annotations",
+      "summary": "Create Annotation",
+      "description": "Create a new annotation",
+      "tags": [
+        "Grafana"
+      ],
+      "parametersCount": 0,
+      "hasRequestBody": true,
+      "responseCodes": [
+        "200",
+        "400"
+      ]
+    },
+    {
+      "operationId": "grafanaGetAlertRules",
+      "method": "GET",
+      "path": "/api/v1/provisioning/alert-rules",
+      "summary": "Get Alert Rules",
+      "description": "Get all alert rules",
+      "tags": [
+        "Grafana"
+      ],
+      "parametersCount": 0,
+      "hasRequestBody": false,
+      "responseCodes": [
+        "200"
+      ]
+    }
+  ],
+  "endpoints": [
+    {
+      "path": "/api/v1/query",
+      "methods": [
+        "GET"
+      ]
+    },
+    {
+      "path": "/api/v1/query_range",
+      "methods": [
+        "GET"
+      ]
+    },
+    {
+      "path": "/api/v1/targets",
+      "methods": [
+        "GET"
+      ]
+    },
+    {
+      "path": "/api/v1/alerts",
+      "methods": [
+        "GET"
+      ]
+    },
+    {
+      "path": "/api/v1/rules",
+      "methods": [
+        "GET"
+      ]
+    },
+    {
+      "path": "/api/v1/label/__name__/values",
+      "methods": [
+        "GET"
+      ]
+    },
+    {
+      "path": "/api/v1/series",
+      "methods": [
+        "GET"
+      ]
+    },
+    {
+      "path": "/api/v1/metadata",
+      "methods": [
+        "GET"
+      ]
+    },
+    {
+      "path": "/loki/api/v1/query",
+      "methods": [
+        "GET"
+      ]
+    },
+    {
+      "path": "/loki/api/v1/query_range",
+      "methods": [
+        "GET"
+      ]
+    },
+    {
+      "path": "/loki/api/v1/labels",
+      "methods": [
+        "GET"
+      ]
+    },
+    {
+      "path": "/loki/api/v1/label/{name}/values",
+      "methods": [
+        "GET"
+      ]
+    },
+    {
+      "path": "/loki/api/v1/series",
+      "methods": [
+        "GET"
+      ]
+    },
+    {
+      "path": "/api/search",
+      "methods": [
+        "GET"
+      ]
+    },
+    {
+      "path": "/api/dashboards/uid/{uid}",
+      "methods": [
+        "GET"
+      ]
+    },
+    {
+      "path": "/api/annotations",
+      "methods": [
+        "GET",
+        "POST"
+      ]
+    },
+    {
+      "path": "/api/v1/provisioning/alert-rules",
+      "methods": [
+        "GET"
+      ]
+    }
+  ],
+  "authentication": {
+    "methods": [
+      "API Token (Bearer)",
+      "Grafana API Key"
+    ],
+    "headerName": "Authorization",
+    "headerFormat": "Bearer <token>",
+    "schemes": {
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "description": "Optional bearer token for a gateway in front of the backend"
+      }
+    }
+  },
+  "schemas": [
+    "PrometheusResponse",
+    "LokiResponse",
+    "GrafanaDashboard",
+    "GrafanaAnnotation"
+  ],
+  "generatedAt": "2026-11-13T06:35:11.791Z",
+  "generator": {
+    "name": "generate-docs.js",
+    "version": "1.0.0"
+  }
+}

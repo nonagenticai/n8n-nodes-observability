@@ -1,0 +1,504 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "Observability Node APIs",
+    "version": "1.0.0",
+    "description": "OpenAPI specification for the Observability n8n node, documenting interactions with Prometheus, Loki, and Grafana APIs.",
+    "contact": {
+      "name": "NonAgenticAI",
+      "email": "dev@example.com"
+    }
+  },
+  "servers": [
+    {
+      "url": "http://localhost:9090",
+      "description": "Prometheus Server"
+    },
+    {
+      "url": "http://localhost:3100",
+      "description": "Loki Server"
+    },
+    {
+      "url": "http://localhost:3000",
+      "description": "Grafana Server"
+    }
+  ],
+  "paths": {
+    "/api/v1/query": {
+      "get": {
+        "operationId": "prometheusInstantQuery",
+        "summary": "Instant Query",
+        "description": "Execute an instant PromQL query at a single point in time",
+        "tags": ["Prometheus"],
+        "parameters": [
+          {
+            "name": "query",
+            "in": "query",
+            "required": true,
+            "description": "PromQL query expression",
+            "schema": { "type": "string" }
+          },
+          {
+            "name": "time",
+            "in": "query",
+            "required": false,
+            "description": "Evaluation timestamp (Unix or RFC3339)",
+            "schema": { "type": "string" }
+          },
+          {
+            "name": "timeout",
+            "in": "query",
+            "required": false,
+            "description": "Query timeout",
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": { "description": "Query results returned successfully" },
+          "400": { "description": "Bad request - invalid query" },
+          "503": { "description": "Service unavailable" }
+        }
+      }
+    },
+    "/api/v1/query_range": {
+      "get": {
+        "operationId": "prometheusRangeQuery",
+        "summary": "Range Query",
+        "description": "Execute a PromQL query over a range of time",
+        "tags": ["Prometheus"],
+        "parameters": [
+          {
+            "name": "query",
+            "in": "query",
+            "required": true,
+            "description": "PromQL query expression",
+            "schema": { "type": "string" }
+          },
+          {
+            "name": "start",
+            "in": "query",
+            "required": true,
+            "description": "Start timestamp",
+            "schema": { "type": "string" }
+          },
+          {
+            "name": "end",
+            "in": "query",
+            "required": true,
+            "description": "End timestamp",
+            "schema": { "type": "string" }
+          },
+          {
+            "name": "step",
+            "in": "query",
+            "required": false,
+            "description": "Query resolution step width",
+            "schema": { "type": "string", "default": "15s" }
+          }
+        ],
+        "responses": {
+          "200": { "description": "Range query results returned successfully" },
+          "400": { "description": "Bad request - invalid query or time range" }
+        }
+      }
+    },
+    "/api/v1/targets": {
+      "get": {
+        "operationId": "prometheusGetTargets",
+        "summary": "Get Targets",
+        "description": "Get active and dropped scrape targets",
+        "tags": ["Prometheus"],
+        "parameters": [
+          {
+            "name": "state",
+            "in": "query",
+            "required": false,
+            "description": "Filter by target state (active, dropped, any)",
+            "schema": { "type": "string", "enum": ["active", "dropped", "any"] }
+          }
+        ],
+        "responses": {
+          "200": { "description": "Targets returned successfully" }
+        }
+      }
+    },
+    "/api/v1/alerts": {
+      "get": {
+        "operationId": "prometheusGetAlerts",
+        "summary": "Get Alerts",
+        "description": "Get list of active alerts",
+        "tags": ["Prometheus"],
+        "responses": {
+          "200": { "description": "Alerts returned successfully" }
+        }
+      }
+    },
+    "/api/v1/rules": {
+      "get": {
+        "operationId": "prometheusGetRules",
+        "summary": "Get Rules",
+        "description": "Get alerting and recording rules",
+        "tags": ["Prometheus"],
+        "parameters": [
+          {
+            "name": "type",
+            "in": "query",
+            "required": false,
+            "description": "Filter by rule type",
+            "schema": { "type": "string", "enum": ["alert", "record"] }
+          }
+        ],
+        "responses": {
+          "200": { "description": "Rules returned successfully" }
+        }
+      }
+    },
+    "/api/v1/label/__name__/values": {
+      "get": {
+        "operationId": "prometheusGetMetricNames",
+        "summary": "Get Metric Names",
+        "description": "Get all metric names",
+        "tags": ["Prometheus"],
+        "responses": {
+          "200": { "description": "Metric names returned successfully" }
+        }
+      }
+    },
+    "/api/v1/series": {
+      "get": {
+        "operationId": "prometheusGetSeries",
+        "summary": "Get Series",
+        "description": "Find series by label matchers",
+        "tags": ["Prometheus"],
+        "parameters": [
+          {
+            "name": "match[]",
+            "in": "query",
+            "required": true,
+            "description": "Series selector",
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": { "description": "Series returned successfully" }
+        }
+      }
+    },
+    "/api/v1/metadata": {
+      "get": {
+        "operationId": "prometheusGetMetadata",
+        "summary": "Get Metadata",
+        "description": "Get metric metadata",
+        "tags": ["Prometheus"],
+        "parameters": [
+          {
+            "name": "metric",
+            "in": "query",
+            "required": false,
+            "description": "Metric name filter",
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": { "description": "Metadata returned successfully" }
+        }
+      }
+    },
+    "/loki/api/v1/query": {
+      "get": {
+        "operationId": "lokiQueryLogs",
+        "summary": "Query Logs",
+        "description": "Execute a LogQL instant query",
+        "tags": ["Loki"],
+        "parameters": [
+          {
+            "name": "query",
+            "in": "query",
+            "required": true,
+            "description": "LogQL query expression",
+            "schema": { "type": "string" }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "description": "Maximum number of entries to return",
+            "schema": { "type": "integer", "default": 100 }
+          },
+          {
+            "name": "direction",
+            "in": "query",
+            "required": false,
+            "description": "Log ordering direction",
+            "schema": { "type": "string", "enum": ["forward", "backward"], "default": "backward" }
+          }
+        ],
+        "responses": {
+          "200": { "description": "Logs returned successfully" },
+          "400": { "description": "Bad request - invalid query" }
+        }
+      }
+    },
+    "/loki/api/v1/query_range": {
+      "get": {
+        "operationId": "lokiQueryLogsRange",
+        "summary": "Query Logs Range",
+        "description": "Execute a LogQL range query",
+        "tags": ["Loki"],
+        "parameters": [
+          {
+            "name": "query",
+            "in": "query",
+            "required": true,
+            "description": "LogQL query expression",
+            "schema": { "type": "string" }
+          },
+          {
+            "name": "start",
+            "in": "query",
+            "required": true,
+            "description": "Start timestamp",
+            "schema": { "type": "string" }
+          },
+          {
+            "name": "end",
+            "in": "query",
+            "required": true,
+            "description": "End timestamp",
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": { "description": "Range logs returned successfully" }
+        }
+      }
+    },
+    "/loki/api/v1/labels": {
+      "get": {
+        "operationId": "lokiGetLabels",
+        "summary": "Get Labels",
+        "description": "Get all label names",
+        "tags": ["Loki"],
+        "responses": {
+          "200": { "description": "Labels returned successfully" }
+        }
+      }
+    },
+    "/loki/api/v1/label/{name}/values": {
+      "get": {
+        "operationId": "lokiGetLabelValues",
+        "summary": "Get Label Values",
+        "description": "Get values for a specific label",
+        "tags": ["Loki"],
+        "parameters": [
+          {
+            "name": "name",
+            "in": "path",
+            "required": true,
+            "description": "Label name",
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": { "description": "Label values returned successfully" }
+        }
+      }
+    },
+    "/loki/api/v1/series": {
+      "get": {
+        "operationId": "lokiGetSeries",
+        "summary": "Get Series",
+        "description": "Get series by label matchers",
+        "tags": ["Loki"],
+        "parameters": [
+          {
+            "name": "match[]",
+            "in": "query",
+            "required": true,
+            "description": "Series selector",
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": { "description": "Series returned successfully" }
+        }
+      }
+    },
+    "/api/search": {
+      "get": {
+        "operationId": "grafanaSearchDashboards",
+        "summary": "Search Dashboards",
+        "description": "Search for dashboards",
+        "tags": ["Grafana"],
+        "parameters": [
+          {
+            "name": "query",
+            "in": "query",
+            "required": false,
+            "description": "Search query",
+            "schema": { "type": "string" }
+          },
+          {
+            "name": "type",
+            "in": "query",
+            "required": false,
+            "description": "Resource type filter",
+            "schema": { "type": "string", "enum": ["dash-db", "dash-folder"] }
+          }
+        ],
+        "responses": {
+          "200": { "description": "Search results returned successfully" }
+        }
+      }
+    },
+    "/api/dashboards/uid/{uid}": {
+      "get": {
+        "operationId": "grafanaGetDashboard",
+        "summary": "Get Dashboard",
+        "description": "Get a dashboard by UID",
+        "tags": ["Grafana"],
+        "parameters": [
+          {
+            "name": "uid",
+            "in": "path",
+            "required": true,
+            "description": "Dashboard UID",
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": { "description": "Dashboard returned successfully" },
+          "404": { "description": "Dashboard not found" }
+        }
+      }
+    },
+    "/api/annotations": {
+      "get": {
+        "operationId": "grafanaGetAnnotations",
+        "summary": "Get Annotations",
+        "description": "Get annotations",
+        "tags": ["Grafana"],
+        "parameters": [
+          {
+            "name": "from",
+            "in": "query",
+            "required": false,
+            "description": "Start time filter",
+            "schema": { "type": "integer" }
+          },
+          {
+            "name": "to",
+            "in": "query",
+            "required": false,
+            "description": "End time filter",
+            "schema": { "type": "integer" }
+          },
+          {
+            "name": "dashboardId",
+            "in": "query",
+            "required": false,
+            "description": "Dashboard ID filter",
+            "schema": { "type": "integer" }
+          }
+        ],
+        "responses": {
+          "200": { "description": "Annotations returned successfully" }
+        }
+      },
+      "post": {
+        "operationId": "grafanaCreateAnnotation",
+        "summary": "Create Annotation",
+        "description": "Create a new annotation",
+        "tags": ["Grafana"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "text": { "type": "string", "description": "Annotation text" },
+                  "dashboardId": { "type": "integer", "description": "Dashboard ID" },
+                  "panelId": { "type": "integer", "description": "Panel ID" },
+                  "tags": { "type": "array", "items": { "type": "string" }, "description": "Tags" },
+                  "time": { "type": "integer", "description": "Timestamp" },
+                  "timeEnd": { "type": "integer", "description": "End timestamp for region annotations" }
+                },
+                "required": ["text"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": { "description": "Annotation created successfully" },
+          "400": { "description": "Bad request" }
+        }
+      }
+    },
+    "/api/v1/provisioning/alert-rules": {
+      "get": {
+        "operationId": "grafanaGetAlertRules",
+        "summary": "Get Alert Rules",
+        "description": "Get all alert rules",
+        "tags": ["Grafana"],
+        "responses": {
+          "200": { "description": "Alert rules returned successfully" }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "description": "Optional bearer token for a gateway in front of the backend"
+      }
+    },
+    "schemas": {
+      "PrometheusResponse": {
+        "type": "object",
+        "properties": {
+          "status": { "type": "string", "enum": ["success", "error"] },
+          "data": { "type": "object" },
+          "errorType": { "type": "string" },
+          "error": { "type": "string" },
+          "warnings": { "type": "array", "items": { "type": "string" } }
+        }
+      },
+      "LokiResponse": {
+        "type": "object",
+        "properties": {
+          "status": { "type": "string", "enum": ["success", "error"] },
+          "data": { "type": "object" }
+        }
+      },
+      "GrafanaDashboard": {
+        "type": "object",
+        "properties": {
+          "uid": { "type": "string" },
+          "title": { "type": "string" },
+          "panels": { "type": "array" }
+        }
+      },
+      "GrafanaAnnotation": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "integer" },
+          "text": { "type": "string" },
+          "time": { "type": "integer" },
+          "timeEnd": { "type": "integer" },
+          "tags": { "type": "array", "items": { "type": "string" } }
+        }
+      }
+    }
+  },
+  "security": [
+    { "bearerAuth": [] }
+  ],
+  "tags": [
+    { "name": "Prometheus", "description": "Prometheus metrics and alerting operations" },
+    { "name": "Loki", "description": "Loki log query operations" },
+    { "name": "Grafana", "description": "Grafana dashboard and annotation operations" }
+  ]
+}

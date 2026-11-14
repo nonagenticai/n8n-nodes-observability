@@ -114,6 +114,12 @@ Report vulnerabilities privately through the repository's Security tab — see
 Issues and pull requests are welcome. See [`CONTRIBUTING.md`](CONTRIBUTING.md) for the
 development commands and the commit conventions. Commits carry DCO sign-off.
 
+## Licensing
+
+The code in this repository is Apache-2.0 and needs no licence key to build, test or run.
+It contains no licence-enforcement code: the Apache-2.0 licence in [`LICENSE`](LICENSE) is the
+only licence that applies, and no licence server is involved.
+
 ## License
 
 [Apache-2.0](./LICENSE)

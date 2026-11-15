@@ -60,6 +60,45 @@ function describeJson(v: unknown): string {
   return typeof v === "object" ? "an object" : `a ${typeof v}`;
 }
 
+/**
+ * Decode the body of one Prometheus label value (the text between its quotes).
+ *
+ * Escapes are decoded in ONE pass. The old chained form —
+ * `.replace(/\\"/g, '"').replace(/\\\\/g, "\\").replace(/\\n/g, "\n")` — was
+ * js/double-escaping: the second replace turns `\\` into `\`, and the third then
+ * treats the `n` that followed as a new escape, so the encoded input `\\n`
+ * (a literal backslash then `n`) was wrongly decoded to a real newline.
+ * Scanning left to right with a single escape table cannot do that.
+ *
+ * Prometheus only emits `\\`, `\"` and `\n`; an unrecognised escape is kept
+ * verbatim (backslash and the character after it), matching the old chain.
+ */
+export function unescapePrometheusLabelValue(value: string): string {
+  if (!value.includes("\\")) return value;
+  let out = "";
+  for (let i = 0; i < value.length; i += 1) {
+    const ch = value[i];
+    if (ch !== "\\" || i + 1 >= value.length) {
+      out += ch;
+      continue;
+    }
+    const next = value[i + 1];
+    if (next === '"') {
+      out += '"';
+      i += 1;
+    } else if (next === "\\") {
+      out += "\\";
+      i += 1;
+    } else if (next === "n") {
+      out += "\n";
+      i += 1;
+    } else {
+      out += ch;
+    }
+  }
+  return out;
+}
+
 /** ⛔ Valid JSON of the wrong shape is an error naming the field — never a silent `{}` / `[]`. */
 function shapeError(f: JsonField, want: string, got: unknown): NodeOperationError {
   return new NodeOperationError(
@@ -675,7 +714,7 @@ const resourceHandlers: Record<string, ResourceHandlers> = {
         const labelRe = /([a-zA-Z_][a-zA-Z0-9_]*)="((?:[^"\\]|\\.)*)"/g;
         let lm: RegExpExecArray | null;
         while ((lm = labelRe.exec(labelBlob)) !== null) {
-          labels[lm[1]] = lm[2].replace(/\\"/g, '"').replace(/\\\\/g, "\\").replace(/\\n/g, "\n");
+          labels[lm[1]] = unescapePrometheusLabelValue(lm[2]);
         }
 
         if (assetKind && labels.asset_kind !== assetKind) continue;

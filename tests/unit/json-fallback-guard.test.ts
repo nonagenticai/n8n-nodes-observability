@@ -12,7 +12,22 @@ import path from "path";
  */
 const OPS = path.join(__dirname, "../../nodes/Observability/operations/index.ts");
 
-/** Blank comments and string/template literal text (same length) so braces and keywords are code-only. */
+/**
+ * True when a '/' at `i` starts a regex literal rather than division: the
+ * previous significant character must not end an expression. The guard source
+ * uses regex literals only after `=` and `(`, but this also admits `return`
+ * style positions by rejecting identifiers/`)`/`]` only. A backtick is
+ * rejected because the masker closes a nested template at the inner backtick;
+ * treating the following '/' as a regex would run to end of line.
+ */
+function regexAllowed(src: string, i: number): boolean {
+  let k = i - 1;
+  while (k >= 0 && /\s/.test(src[k])) k -= 1;
+  if (k < 0) return true;
+  return !/[A-Za-z0-9_$`)\]]/.test(src[k]);
+}
+
+/** Blank comments, regex and string/template literal text (same length) so braces and keywords are code-only. */
 function mask(src: string): string {
   const out = src.split("");
   const blank = (a: number, b: number) => { for (let k = a; k < b; k++) if (out[k] !== "\n") out[k] = " "; };
@@ -22,6 +37,20 @@ function mask(src: string): string {
     const n = src[i + 1];
     if (c === "/" && n === "/") { const e = src.indexOf("\n", i); const end = e === -1 ? src.length : e; blank(i, end); i = end; continue; }
     if (c === "/" && n === "*") { const e = src.indexOf("*/", i + 2); if (e === -1) throw new Error("unterminated comment"); blank(i, e + 2); i = e + 2; continue; }
+    if (c === "/" && regexAllowed(src, i)) {
+      let j = i + 1;
+      let inClass = false;
+      while (j < src.length) {
+        if (src[j] === "\\") { j += 2; continue; }
+        if (src[j] === "[") inClass = true;
+        else if (src[j] === "]") inClass = false;
+        else if (src[j] === "/" && !inClass) break;
+        else if (src[j] === "\n") throw new Error("unterminated regex");
+        j++;
+      }
+      if (j >= src.length) throw new Error("unterminated regex");
+      blank(i + 1, j); i = j + 1; continue;
+    }
     if (c === "'" || c === '"' || c === "`") {
       let j = i + 1;
       while (j < src.length && src[j] !== c) { if (src[j] === "\\") j++; j++; }
